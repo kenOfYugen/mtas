@@ -8,6 +8,7 @@ requestHandler = (req, res) ->
 
 # TODO: modify to use event listener
 # TODO: add error handling mechanism
+# TODO: handle case where port is already in use
 serverFactory = (handler=requestHandler, port=3000) ->
   activeServer = null
   server = createServer requestHandler
