@@ -1,8 +1,10 @@
 test = require 'tape'
 type = require 'tcomb'
 
-serverFactory = require '../src'
 request = require 'request'
+{readFileSync} = require 'fs'
+serverFactory = require '../src'
+
 
 test "Server module has listen and close methods", (assert) ->
   server = serverFactory()
@@ -72,4 +74,20 @@ test "Server module is responding when active", (assert) ->
     close()
     assert.end()
 
+test "Server module responds with requested file contents", (assert) ->
+  {listen, close, getPort, getHostName} = serverFactory()
+  listen()
+  port = getPort()
+  hostName = getHostName()
 
+  request "http://#{hostName}:#{port}/http.test.coffee", (err, response, body) ->
+
+    expected = (readFileSync "#{__dirname}/http.test.coffee").toString()
+
+    assert.equal(
+      body, expected
+      "The static file server is retrieving the requested file contents"
+    )
+
+    close()
+    assert.end()
