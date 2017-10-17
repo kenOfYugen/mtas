@@ -34,12 +34,12 @@ requestHandler = (req, res) -> switch req.url
 # TODO: modify to use event listener
 # TODO: add error handling mechanism
 # TODO: handle case where port is already in use
-serverFactory = (port=3000) ->
+serverFactory = ->
   activeServer = null
   server = createServer requestHandler
 
   {
-    listen: -> activeServer = server.listen port
+    listen: (port=3000) -> activeServer = server.listen port
     close: -> server.close(); activeServer = null
     getPort: -> activeServer?.address().port
     getHostName: -> activeServer?.address().address
