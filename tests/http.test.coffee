@@ -14,6 +14,7 @@ test "Server module has listen and close methods", (assert) ->
     'close'
     'getPort'
     'getHostName'
+    'getIPVersion'
   ].map (method) ->
     assert.true(
       type.Function server[method]
@@ -60,11 +61,11 @@ test "Server module should select a port when none is provided", (assert) ->
   assert.end()
 
 test "Server module is responding when active", (assert) ->
-  {listen, close, getPort, getHostName} = serverFactory()
+  {listen, close, getPort, getHostName, getIPVersion} = serverFactory()
   listen()
   port = getPort()
-  hostName = getHostName()
-
+  ip = getIPVersion()
+  hostName = if ip is '4' then getHostName() else "[#{getHostName()}]"
   request "http://#{hostName}:#{port}", (err, response, body) ->
     assert.error(
       err
@@ -80,7 +81,7 @@ test "Server module responds with requested file contents", (assert) ->
   port = getPort()
   hostName = getHostName()
 
-  request "http://#{hostName}:#{port}/http.test.coffee", (err, response, body) ->
+  request "http://[#{hostName}]:#{port}/../tests/http.test.coffee", (err, response, body) ->
 
     expected = (readFileSync "#{__dirname}/http.test.coffee").toString()
 
